@@ -18,5 +18,4 @@ RUN wget http://ar2.php.net/get/php-5.6.11.tar.gz/from/this/mirror -O php.tar.gz
 	&& cd php*/ \
 	&& ./configure --with-libdir=lib64 --prefix=/usr/local --with-layout=PHP \
     && make \
-    && make test \
     && make install
