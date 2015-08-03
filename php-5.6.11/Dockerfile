@@ -22,6 +22,7 @@ RUN wget http://ar2.php.net/get/php-${PHP_VERSION}.tar.gz/from/this/mirror -O ph
 	&& tar xvf php.tar.gz \
 	&& cd php*/ \
 	&& ./configure --with-libdir=lib64 --prefix=/usr/local --with-layout=PHP --enable-fpm --enable-mbstring \
+		--with-openssl --with-pdo-mysql \
     && make \
     && make install
 
@@ -30,12 +31,12 @@ RUN git clone --depth=1 https://github.com/phalcon/cphalcon.git \
 	&& cd cphalcon/build/ \
 	&& ./install
 
-COPY php.ini ${PHP_CONF}
-COPY php-fpm.conf ${PHP_FPM_CONF}
+COPY conf/php.ini ${PHP_CONF}
+COPY conf/php-fpm.conf ${PHP_FPM_CONF}
 
 EXPOSE 9000
 
 # cleanup
 RUN rm -rf php*/ cphalcon/ rpmforge-release-*.rpm
 
-CMD tail -f /dev/null
+CMD php-fpm && tail -f /dev/null

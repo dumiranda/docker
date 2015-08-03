@@ -1,5 +1,9 @@
 FROM centos:6
 
+SET NGINX_PATH /usr/local/nginx
+
+WORKDIR ${NGINX_PATH}
+
 RUN yum -y install gcc gcc-c++ kernel-devel wget tar
 
 RUN yum -y install pcre-devel openssl-devel \
@@ -7,14 +11,15 @@ RUN yum -y install pcre-devel openssl-devel \
 	&& tar xvf nginx.tar.gz \
 	&& cd nginx*/ \
 	&& ./configure \
-    	--sbin-path=/usr/local/nginx/nginx \
-    	--conf-path=/usr/local/nginx/nginx.conf \
-    	--pid-path=/usr/local/nginx/nginx.pid \
+    	--sbin-path=${NGINX_PATH}/nginx \
+    	--conf-path=${NGINX_PATH}/nginx.conf \
+    	--pid-path=${NGINX_PATH}/nginx.pid \
     	--with-http_ssl_module \
     && make \
     && make install
 
-COPY nginx/nginx.conf /usr/local/nginx/nginx.conf
-COPY nginx/vhosts/* /usr/local/nginx/vhosts.d/
+RUN ln -s ${NGINX_PATH}/nginx /usr/bin/nginx
 
-CMD tail -f /dev/null
+COPY conf/* ${NGINX_PATH}
+
+CMD nginx && tail -f /dev/null
